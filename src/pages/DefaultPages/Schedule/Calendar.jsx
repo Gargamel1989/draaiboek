@@ -142,9 +142,9 @@ export default function Calendar({ camp, onSelectEvent }) {
 
   const events = camp.activities.map((a, i) => ({
     id: i,
-    title: a.title,
-    start: a.start.toDate(),
-    end: a.end.toDate(),
+    title: a.name,
+    start: a.start,
+    end: a.end,
     resource: {
       id: i,
       ...a,

@@ -9,18 +9,38 @@ type CampParams = {
   campId: string;
 };
 
+export type Camp = {
+  id: string;
+  name: string;
+  dateFrom: Date;
+  dateUntil: Date;
+  canEdit: boolean;
+  activities: {
+    name: string;
+    start: Date;
+    end: Date;
+  }[];
+  pages: {
+    name: string;
+    path: string;
+    defaultPage: string | undefined;
+    image: string;
+    description: string;
+    visible: boolean;
+    participants: any[] | undefined;
+  }[];
+};
+
 export default function useCamp(): [
-  mFirebase.firestore.DocumentData | undefined,
+  Camp | undefined,
   boolean,
-  mFirebase.auth.Error | mFirebase.FirebaseError | undefined
+  mFirebase.auth.Error | mFirebase.FirebaseError | Error | undefined
 ] {
   const [user, authLoading, authError] = useAuthState(firebase.auth);
-  const [campData, setCampData] = React.useState<
-    mFirebase.firestore.DocumentData | undefined
-  >(undefined);
+  const [campData, setCampData] = React.useState<Camp | undefined>(undefined);
   const [dbLoading, setDBLoading] = React.useState(false);
   const [dbError, setDBError] = React.useState<
-    mFirebase.FirebaseError | undefined
+    mFirebase.FirebaseError | Error | undefined
   >(undefined);
 
   const { campId } = useParams<CampParams>();
@@ -35,12 +55,26 @@ export default function useCamp(): [
       .doc(campId)
       .onSnapshot(
         (doc) => {
-          setCampData({
-            ...doc.data(),
-            dateFrom: doc.data()?.dateFrom.toDate(),
-            dateUntil: doc.data()?.dateUntil.toDate(),
-            canEdit: doc.data()?.editors.indexOf(user.email) >= 0,
-          });
+          const campData = doc.data();
+
+          if (!campData) {
+            setCampData(undefined);
+            setDBError(new Error("Not Found"));
+          } else {
+            setCampData({
+              id: campId,
+              name: campData.name,
+              dateFrom: campData.dateFrom.toDate(),
+              dateUntil: campData.dateUntil.toDate(),
+              canEdit: campData.editors.indexOf(user.email) >= 0,
+              activities: campData.activities.map((a: any) => ({
+                name: a.name,
+                start: a.start.toDate(),
+                end: a.end.toDate(),
+              })),
+              pages: campData.pages,
+            });
+          }
           setDBLoading(false);
         },
         (error) => {

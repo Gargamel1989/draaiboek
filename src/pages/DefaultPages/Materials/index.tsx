@@ -1,22 +1,20 @@
 import React from "react";
 
 import { CssBaseline } from "@material-ui/core";
-import useCamp from "../../../hooks/useCamp";
-import LoadingPage from "../../LoadingPage";
+import { Camp } from "../../../hooks/useCamp";
 import DraaiboekAppBar from "../../../components/AppBar";
+import NotFoundPage from "../../NotFoundPage";
 
 // import useStyles from "./styles";
 
-export default function MaterialsPage() {
-  const [camp, loading] = useCamp();
-
+export default function MaterialsPage({ camp }: { camp: Camp }) {
   // const classes = useStyles();
 
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   const page = camp.pages.find((p) => p.defaultPage === "Materials");
+
+  if (!page) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>

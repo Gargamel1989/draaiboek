@@ -11,10 +11,9 @@ import {
 import format from "date-fns/format";
 
 import AppBar from "../../components/AppBar";
+import { Camp } from "../../hooks/useCamp";
 
 import useStyles from "./styles";
-import useCamp from "../../hooks/useCamp";
-import LoadingPage from "../LoadingPage";
 
 type ActivityPageParams = {
   campId: string;
@@ -28,20 +27,15 @@ type Activity = {
   end: Date;
 };
 
-export default function ActivityPage() {
-  const [camp, loading] = useCamp();
+export default function ActivityPage({ camp }: { camp: Camp }) {
   const params = useParams<ActivityPageParams>();
 
   const classes = useStyles();
 
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   const activity: Activity = {
-    ...camp.activities[params.activityId],
-    start: camp.activities[params.activityId].start.toDate(),
-    end: camp.activities[params.activityId].end.toDate(),
+    ...camp.activities[parseInt(params.activityId, 10)],
+    start: camp.activities[parseInt(params.activityId, 10)].start,
+    end: camp.activities[parseInt(params.activityId, 10)].end,
   };
 
   return (

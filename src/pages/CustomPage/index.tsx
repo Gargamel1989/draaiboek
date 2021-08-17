@@ -7,31 +7,19 @@ import { Editor } from "@tinymce/tinymce-react";
 import AppBar from "../../components/AppBar";
 
 import useStyles from "./styles";
-import useCamp from "../../hooks/useCamp";
-import Loader from "../../components/Loader";
+import { Camp } from "../../hooks/useCamp";
 
 type CustomPageParams = {
   campId: string;
   pageName: string;
 };
 
-export default function CustomPage() {
-  const [camp, loading] = useCamp();
+export default function CustomPage({ camp }: { camp: Camp }) {
   const params = useParams<CustomPageParams>();
 
   const classes = useStyles();
 
   if (!params.pageName) return <Redirect to={`/camp/${params.campId}`} />;
-
-  if (loading || !camp) {
-    return (
-      <React.Fragment>
-        <CssBaseline />
-        <AppBar />
-        <Loader />
-      </React.Fragment>
-    );
-  }
 
   return (
     <React.Fragment>

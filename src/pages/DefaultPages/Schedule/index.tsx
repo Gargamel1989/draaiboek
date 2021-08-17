@@ -3,20 +3,18 @@ import { useHistory } from "react-router-dom";
 import { CssBaseline } from "@material-ui/core";
 
 import DraaiboekAppBar from "../../../components/AppBar";
-import useCamp from "../../../hooks/useCamp";
-import LoadingPage from "../../LoadingPage";
+import { Camp } from "../../../hooks/useCamp";
 import Calendar from "./Calendar";
+import NotFoundPage from "../../NotFoundPage";
 
-export default function SchedulePage() {
+export default function SchedulePage({ camp }: { camp: Camp }) {
   const history = useHistory();
 
-  const [camp, loading] = useCamp();
-
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   const page = camp.pages.find((p) => p.defaultPage === "Schedule");
+
+  if (!page) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>
@@ -24,7 +22,7 @@ export default function SchedulePage() {
       <DraaiboekAppBar title={page.name} backPage="." />
       <Calendar
         camp={camp}
-        onSelectEvent={(event) => history.push(`./activity/${event.id}`)}
+        onSelectEvent={(event: any) => history.push(`./activity/${event.id}`)}
       />
     </>
   );

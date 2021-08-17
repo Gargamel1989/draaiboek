@@ -1,9 +1,9 @@
 import React from "react";
 
 import { CssBaseline } from "@material-ui/core";
-import useCamp from "../../../hooks/useCamp";
-import LoadingPage from "../../LoadingPage";
+import { Camp } from "../../../hooks/useCamp";
 import DraaiboekAppBar from "../../../components/AppBar";
+import NotFoundPage from "../../NotFoundPage";
 // import Header from "../../components/base/Header";
 // import TaskContext from "../../components/base/App/TaskContext";
 
@@ -11,7 +11,7 @@ import DraaiboekAppBar from "../../../components/AppBar";
 // import Maaltijd from "./Maaltijd";
 // import useStyles from "./styles";
 
-export default function MenuPage() {
+export default function MenuPage({ camp }: { camp: Camp }) {
   // const params = useParams();
   // const tasks = React.useContext(TaskContext);
   // const [selectedActivity, setSelectedActivity] = useState(null);
@@ -43,15 +43,14 @@ export default function MenuPage() {
   //     <Schedule onSelectEvent={onSelectEvent} />
   //   </>
   // );
-  const [camp, loading] = useCamp();
 
   // const classes = useStyles();
 
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   const page = camp.pages.find((p) => p.defaultPage === "Menu");
+
+  if (!page) {
+    return <NotFoundPage />;
+  }
 
   return (
     <>

@@ -6,6 +6,12 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import {
+  CardActionArea,
+  CardActions,
+  IconButton,
+  Tooltip,
+} from "@material-ui/core";
 import Container from "@material-ui/core/Container";
 import EditIcon from "@material-ui/icons/Edit";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
@@ -13,14 +19,7 @@ import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 import AppBar from "../../components/AppBar";
 
 import useStyles from "./styles";
-import useCamp from "../../hooks/useCamp";
-import {
-  CardActionArea,
-  CardActions,
-  IconButton,
-  Tooltip,
-} from "@material-ui/core";
-import LoadingPage from "../LoadingPage";
+import { Camp } from "../../hooks/useCamp";
 
 type IPage = {
   name: string;
@@ -31,26 +30,15 @@ type IPage = {
   visible: boolean;
 };
 
-export default function Portal() {
-  const [camp, loading] = useCamp();
+export default function Portal({ camp }: { camp: Camp }) {
   const location = useLocation();
 
   const classes = useStyles();
 
-  React.useEffect(() => {
-    if (!camp) return;
-
-    document.title = camp.name;
-  }, [camp]);
-
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   return (
     <React.Fragment>
       <CssBaseline />
-      <AppBar title={camp.name} />
+      <AppBar title={camp?.name} />
       <main>
         <div className={classes.heroContent}>
           <Container maxWidth="sm">
@@ -60,7 +48,7 @@ export default function Portal() {
               align="center"
               color="textPrimary"
             >
-              {camp.name}
+              {camp?.name}
             </Typography>
             <Typography
               variant="h5"
@@ -68,13 +56,13 @@ export default function Portal() {
               color="textSecondary"
               paragraph
             >
-              Draaiboek {camp.dateFrom.getFullYear()}
+              Draaiboek {camp?.dateFrom.getFullYear()}
             </Typography>
           </Container>
         </div>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {camp.pages
+            {camp?.pages
               .filter((page: IPage) => page.visible)
               .map((page: IPage) => (
                 <Grid key={page.path} item xs={12} sm={6} md={4}>
@@ -96,7 +84,7 @@ export default function Portal() {
                         <Typography>{page.description}</Typography>
                       </CardContent>
                     </CardActionArea>
-                    {camp.canEdit && (
+                    {camp?.canEdit && (
                       <CardActions>
                         <Tooltip title="Edit this card">
                           <IconButton aria-label="Edit this card">
@@ -113,7 +101,7 @@ export default function Portal() {
                   </Card>
                 </Grid>
               ))}
-            {camp.canEdit && (
+            {camp?.canEdit && (
               <Grid item xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardActionArea

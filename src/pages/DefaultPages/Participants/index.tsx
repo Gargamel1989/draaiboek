@@ -6,14 +6,14 @@ import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
-import useCamp from "../../../hooks/useCamp";
-import LoadingPage from "../../LoadingPage";
+import { Camp } from "../../../hooks/useCamp";
 import { Container, CssBaseline, Grid } from "@material-ui/core";
 import DraaiboekAppBar from "../../../components/AppBar";
 
 import useStyles from "./styles";
+import NotFoundPage from "../../NotFoundPage";
 
-export default function ContactInformationPage(props) {
+export default function ContactInformationPage({ camp }: { camp: Camp }) {
   // const [campContacts, setCampContacts] = useState(null);
   // const [activityContacts, setActivityContacts] = useState(null);
   // const [bizonContacts, setBizonContacts] = useState(null);
@@ -83,15 +83,13 @@ export default function ContactInformationPage(props) {
 
   // const { classes } = props;
 
-  const [camp, loading] = useCamp();
-
   const classes = useStyles();
 
-  if (loading || !camp) {
-    return <LoadingPage />;
-  }
-
   const page = camp.pages.find((p) => p.defaultPage === "Participants");
+
+  if (!page) {
+    return <NotFoundPage />;
+  }
 
   const participants = page.participants || [];
 
@@ -109,7 +107,7 @@ export default function ContactInformationPage(props) {
                   <TableCell align="left">Naam</TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody className={classes.body}>
+              <TableBody>
                 {participants.map((p) => {
                   return (
                     <TableRow key={p.name}>
@@ -132,7 +130,6 @@ export default function ContactInformationPage(props) {
                 })}
               </TableBody>
             </Table>
-            <div className={classes.spacer} />
           </Paper>
         </Grid>
       </Container>
